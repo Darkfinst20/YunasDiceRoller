@@ -1,0 +1,19 @@
+{
+  "name": "yunasdiceroller",
+  "version": "1.0.0",
+  "description": "Dice Roller specified for the Character Yuna",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "YunasDiceRoller"
+  },
+  "author": "Darkfinst20",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.1"
+  }
+}
