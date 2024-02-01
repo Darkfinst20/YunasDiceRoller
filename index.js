@@ -1,5 +1,8 @@
 require('dotenv').config()
 
+const { registerCommands } = require('./register-commands.js')
+const db = require('./database.js')
+const commandExecuter = require('./commandExecuter.js')
 const { Client, IntentsBitField, InteractionType } = require('discord.js')
 const client = new Client({ intents: [
     IntentsBitField.Flags.Guilds,
@@ -10,6 +13,7 @@ const client = new Client({ intents: [
 
 client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag}!`)
+    registerCommands()
 })
 
 client.on('interactionCreate', (interaction) => {
@@ -17,7 +21,7 @@ client.on('interactionCreate', (interaction) => {
         return
     }
 
-    
+    commandExecuter.execCommand(interaction)
 })
 
 client.login(process.env.BOT_TOKEN)
