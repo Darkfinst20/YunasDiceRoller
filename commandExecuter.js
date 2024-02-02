@@ -14,6 +14,18 @@ async function execCommand(interaction) {
         case 'editcharacter':
             execEditCharacter(interaction)
             break;
+
+        case 'getweapon':
+            execGetWeapon(interaction)
+            break;
+
+        case 'createweapon':
+            execCreateWeapon(interaction)
+            break;
+
+        case 'editweapon':
+            execEditWeapon(interaction)
+            break;
     
         default:
             break;
@@ -80,6 +92,71 @@ async function execEditCharacter(interaction) {
         interaction.reply('Value updated')
     } else {
         interaction.reply('Error')
+    }
+}
+
+async function execGetWeapon(interaction) {
+    if(interaction.options.get('name') != null) {
+        const weapon = await db.getWeapon(interaction.options.get('name').value)
+
+        const embed = new discord.EmbedBuilder()
+            .setColor('DarkGrey')
+            .setTitle('Weapon')
+            .addFields(
+                {name: 'Weapon  [Amount|Dice|+Const]', value: weapon.Name + '  [ ' + weapon.amount.toString() + ' | d' +
+                weapon.dice.toString() + ' | +' + weapon.constant.toString() + ' ]'}
+            );
+        
+        interaction.deferReply()
+        interaction.deleteReply()
+        interaction.channel.send({embeds: [embed]})
+        return
+    }
+
+    const weapons = await db.getWeapons()
+    const embed = new discord.EmbedBuilder()
+        .setColor('DarkGrey')
+        .setTitle('Weapons')
+        .addFields({name: 'Weapon  [Amount|Dice|+Const]', value: ' '});
+
+    weapons.forEach(weapon => {
+        embed.addFields(
+            { name: ' ', value: weapon.Name + '  [ ' + weapon.amount.toString() + ' | d' +
+            weapon.dice.toString() + ' | +' + weapon.constant.toString() + ' ]'}
+        );
+    });
+
+    interaction.deferReply()
+    interaction.deleteReply()
+    interaction.channel.send({embeds: [embed]})
+}
+
+async function execCreateWeapon(interaction) {
+    let amount = 1
+    let constant = 0
+    if(interaction.options.get('amount') != null) {
+        amount = interaction.options.get('amount').value
+    }
+    if(interaction.options.get('constant') != null) {
+        constant = interaction.options.get('constant').value
+    }
+
+    const t = await db.createWeapon(interaction.options.get('name').value, interaction.options.get('dice').value, amount, constant);
+
+    if(t) {
+        interaction.reply('Weapon created')
+    } else {
+        interaction.reply('error')
+    }
+}
+
+async function execEditWeapon(interaction) {
+    const t = await db.editWeapon(interaction.options.get('name').value, interaction.options.get('property').value, interaction.options.get('value').value)
+
+    if(t) {
+        interaction.reply('Value updated')
+    } else {
+        interaction.reply('error')
     }
 }
 

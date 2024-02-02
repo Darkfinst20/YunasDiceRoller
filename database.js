@@ -28,4 +28,25 @@ async function editCharacter(name, stat, value) {
     return true
 }
 
-module.exports = {getCharacters, getCharacter, createCharacter, editCharacter}
+async function getWeapons() {
+    const [rows] = await pool.query('SELECT * FROM weapons')
+    return rows
+}
+
+async function getWeapon(name) {
+    const [rows] = await pool.query(`SELECT * FROM weapons WHERE name=?`, [name])
+    return rows[0]
+}
+
+async function createWeapon(name, dice, amount, constant) {
+    await pool.query(`INSERT INTO weapons (Name, dice, amount, constant) VALUES (?, ?, ?, ?)`, [name, dice, amount, constant])
+    return true
+}
+
+async function editWeapon(name, property, value) {
+    await pool.query(`UPDATE weapons SET ${property}=? WHERE Name = ?`, [value, name])
+    return true
+}
+
+module.exports = {getCharacters, getCharacter, createCharacter, editCharacter, 
+                    getWeapons, getWeapon, createWeapon, editWeapon}

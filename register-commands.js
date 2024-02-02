@@ -77,6 +77,72 @@ const commands = [
                 type: ApplicationCommandOptionType.Integer,
             },
         ]
+    },
+    {
+        name: 'getweapon',
+        description: 'Get all or a certain Weapon',
+        options: [
+            {
+                name: 'name',
+                description: 'Weapon Name',
+                type: ApplicationCommandOptionType.String,
+                required: false,
+            },
+        ]
+    },
+    {
+        name: 'createweapon',
+        description: 'creates a new Weapon',
+        options: [
+            {
+                name: 'name',
+                description: 'Weapon Name',
+                type: ApplicationCommandOptionType.String,
+            },
+            {
+                name: 'dice',
+                description: 'Type of dice to be rolled (input Number)',
+                type: ApplicationCommandOptionType.Integer,
+            },
+            {
+                name: 'amount',
+                description: 'Amount of dice to roll (default 1)',
+                type: ApplicationCommandOptionType.Integer,
+                required: false,
+            },
+            {
+                name: 'constant',
+                description: 'Constant damage of Weapon (default 0)',
+                type: ApplicationCommandOptionType.Integer,
+                required: false,
+            }
+        ]
+    },
+    {
+        name: 'editweapon',
+        description: 'Changes property of selected Weapon',
+        options: [
+            {
+                name: 'name',
+                description: 'Weapon Name',
+                type: ApplicationCommandOptionType.String,
+            },
+            {
+                name: 'property',
+                description: 'property to Change',
+                type: ApplicationCommandOptionType.String,
+                choices: [
+                    { name: 'Dice', value: 'dice' },
+                    { name: 'Amount', value: 'amount'},
+                    { name: 'Constant', value: 'constant' },
+                ]
+            },
+            {
+                name: 'value',
+                description: 'New value of property',
+                type: ApplicationCommandOptionType.Integer,
+            }
+        ]
     }
 ];
 
