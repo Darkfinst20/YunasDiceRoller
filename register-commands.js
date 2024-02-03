@@ -143,6 +143,29 @@ const commands = [
                 type: ApplicationCommandOptionType.Integer,
             }
         ]
+    },
+    {
+        name: 'attack',
+        description: 'performes an attack',
+        options: [
+            {
+                name: 'name',
+                description: 'Character Name',
+                type: ApplicationCommandOptionType.String,
+            },
+            {
+                name: 'weapon',
+                description: 'Weapons to use, seperate multiple weapons with ,',
+                type: ApplicationCommandOptionType.String,
+                required: false,
+            },
+            {
+                name: 'adddamage',
+                description: 'Value added to total Damage',
+                type: ApplicationCommandOptionType.Integer,
+                required: false,
+            },
+        ]
     }
 ];
 

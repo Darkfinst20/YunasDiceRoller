@@ -1,5 +1,6 @@
 const discord = require('discord.js')
 const db = require('./database.js')
+const attack = require('./attackHandler.js')
 
 async function execCommand(interaction) {
     switch (interaction.commandName) {
@@ -26,6 +27,10 @@ async function execCommand(interaction) {
         case 'editweapon':
             execEditWeapon(interaction)
             break;
+
+        case 'attack':
+            execAttack(interaction)
+            break;
     
         default:
             break;
@@ -37,7 +42,7 @@ async function execGetCharacter(interaction) {
         const character = await db.getCharacter(interaction.options.get('name').value)
         
         const embed = new discord.EmbedBuilder()
-            .setColor('DarkRed')
+            .setColor('Fuchsia')
             .setTitle('Character')
             .addFields(
                 { name: 'Name  [CON|STR|AGI|INT|WIS]', value: character.Name + '  [ ' + 
@@ -54,7 +59,7 @@ async function execGetCharacter(interaction) {
     
     const rows = await db.getCharacters()
     const embed = new discord.EmbedBuilder()
-        .setColor('DarkRed')
+        .setColor('Fuchsia')
         .setTitle('Characters')
         .addFields({ name: 'Name [CON|STR|AGI|INT|WIS]', value: ' ' });
 
@@ -158,6 +163,62 @@ async function execEditWeapon(interaction) {
     } else {
         interaction.reply('error')
     }
+}
+
+async function execAttack(interaction) {
+    const name = interaction.options.get('name').value
+    let weaponInput = []
+    let addDamage = 0
+
+    if(interaction.options.get('weapon') != null) {
+        const weaponString = interaction.options.get('weapon').value
+        //check for equip
+        weaponInput = weaponString.split(',')
+    }
+
+    if(interaction.options.get('adddamage') != null) {
+        addDamage = interaction.options.get('adddamage').value
+    }
+
+    const attackData = await attack.performeAttack(name, weaponInput, [], addDamage)
+
+    if(attackData.hitted == false) {
+        const embed = new discord.EmbedBuilder()
+            .setTitle('Missed Hit!')
+            .setColor('Red')
+            .addFields({name: 'Hit Roll', value: attackData.hitRoll.text})
+        
+        interaction.deferReply()
+        interaction.deleteReply()
+        interaction.channel.send({embeds: [embed]})
+        return;
+    }
+
+    const embed = new discord.EmbedBuilder()
+        .setTitle('Attack Hit!')
+        .setColor('Aqua')
+        .addFields(
+            {name: 'Hit Roll', value: attackData.hitRoll.text},
+            {name: 'Character', value: attackData.name, inline: true},
+            {name: 'Damage', value: attackData.damage.toString(), inline: true},
+        )
+
+        if(attackData.weapons.length > 0) {
+            embed.addFields({name: 'Weapons', value: ' '})
+            attackData.weapons.forEach(weapon => {
+                embed.addFields({name: weapon.name, value: weapon.text})
+            })
+        }
+
+        if(attackData.addDamage != null) {
+            embed.addFields({name: 'Added Damage', value: attackData.addDamage.toString()})
+        }
+
+        embed.addFields({name: 'Total Damage', value: attackData.totalDamage.toString()})
+
+        interaction.deferReply()
+        interaction.deleteReply()
+        interaction.channel.send({embeds: [embed]})
 }
 
 module.exports = {execCommand}
