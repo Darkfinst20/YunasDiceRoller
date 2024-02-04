@@ -3,7 +3,7 @@ const rollHandler = require('./rollHandler.js')
 
 async function performeAttack(name, weapons, skills, addDamage) {
     const hitRoll = rollHandler.rollDice(20)
-    if(hitRoll.value <= 5) {
+    if(hitRoll.value <= 6) {
         return {hitted: false, hitRoll: hitRoll}
     }
 
@@ -65,6 +65,17 @@ async function performeAttack(name, weapons, skills, addDamage) {
             })
         }
     })
+
+    if(skills.includes('Blutrausch')) {
+        const blutrausch = await db.getSkill('Blutrausch')
+        const roll = rollHandler.rollDice(20)
+        if(roll.value > 10) {
+            totalDamage = totalDamage * 2
+        }
+        attackData.skills.push({
+            name: blutrausch.Name, text: blutrausch.text + ' | ' + roll.text
+        })
+    }
 
     attackData.totalDamage = totalDamage
 
