@@ -48,5 +48,26 @@ async function editWeapon(name, property, value) {
     return true
 }
 
+async function getSkills() {
+    const [rows] = await pool.query(`SELECT * FROM skills`)
+    return rows
+}
+
+async function getSkill(name) {
+    const [rows] = await pool.query(`SELECT * FROM skills WHERE Name = ?`, [name])
+    return rows[0]
+}
+
+async function createSkill(name, type, value, text) {
+    await pool.query(`INSERT INTO skills (Name, type, value, text) VALUES (?, ?, ?, ?)`, [name, type, value, text])
+    return true
+}
+
+async function editSkill(name, value) {
+    await pool.query(`UPDATE skills SET value = ? WHERE name = ?`, [value, name])
+    return true
+}
+
 module.exports = {getCharacters, getCharacter, createCharacter, editCharacter, 
-                    getWeapons, getWeapon, createWeapon, editWeapon}
+                    getWeapons, getWeapon, createWeapon, editWeapon,
+                    getSkills, getSkill, createSkill, editSkill}

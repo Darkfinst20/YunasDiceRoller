@@ -160,11 +160,74 @@ const commands = [
                 required: false,
             },
             {
+                name: 'skill',
+                description: 'Skill to use, seperate multiple skills with ,',
+                type: ApplicationCommandOptionType.String,
+                require: false,
+            },
+            {
                 name: 'adddamage',
                 description: 'Value added to total Damage',
                 type: ApplicationCommandOptionType.Integer,
                 required: false,
             },
+        ]
+    },
+    {
+        name: 'getskill',
+        description: 'Get all or a certain skill',
+        options: [
+            {
+                name: 'name',
+                description: 'Skill name',
+                type: ApplicationCommandOptionType.String,
+                required: false
+            }
+        ]
+    },
+    {
+        name: 'createskill',
+        description: 'Creates a new Skill',
+        options: [
+            {
+                name: 'name',
+                description: 'Skill name',
+                type: ApplicationCommandOptionType.String,
+            },
+            {
+                name: 'type',
+                description: 'Skill system type',
+                type: ApplicationCommandOptionType.String,
+                choices: [
+                    { name: 'Add Damage', value: 'damage' }
+                ]
+            },
+            {
+                name: 'value',
+                description: 'numeric value for the Skill',
+                type: ApplicationCommandOptionType.Integer,
+            },
+            {
+                name: 'text',
+                description: 'Additional text used by the Skill',
+                type: ApplicationCommandOptionType.String,
+            }
+        ]
+    },
+    {
+        name: 'editskill',
+        description: 'Edits a value of a Skill',
+        options: [
+            {
+                name: 'name',
+                description: 'Skill to edit',
+                type: ApplicationCommandOptionType.String,
+            },
+            {
+                name: 'value',
+                description: 'New value of the Skill',
+                type: ApplicationCommandOptionType.Integer,
+            }
         ]
     }
 ];

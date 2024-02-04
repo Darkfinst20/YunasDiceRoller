@@ -31,6 +31,18 @@ async function execCommand(interaction) {
         case 'attack':
             execAttack(interaction)
             break;
+
+        case 'getskill':
+            execGetSkill(interaction)
+            break;
+
+        case 'createskill':
+            execCreateSkill(interaction)
+            break;
+
+        case 'editskill':
+            execEditSkill(interaction)
+            break;
     
         default:
             break;
@@ -168,6 +180,7 @@ async function execEditWeapon(interaction) {
 async function execAttack(interaction) {
     const name = interaction.options.get('name').value
     let weaponInput = []
+    let skillInput = []
     let addDamage = 0
 
     if(interaction.options.get('weapon') != null) {
@@ -176,11 +189,17 @@ async function execAttack(interaction) {
         weaponInput = weaponString.split(',')
     }
 
+    if(interaction.options.get('skill') != null) {
+        const skillString = interaction.options.get('skill').value
+        //check for passives
+        skillInput = skillString.split(',')
+    }
+
     if(interaction.options.get('adddamage') != null) {
         addDamage = interaction.options.get('adddamage').value
     }
 
-    const attackData = await attack.performeAttack(name, weaponInput, [], addDamage)
+    const attackData = await attack.performeAttack(name, weaponInput, skillInput, addDamage)
 
     if(attackData.hitted == false) {
         const embed = new discord.EmbedBuilder()
@@ -210,6 +229,13 @@ async function execAttack(interaction) {
             })
         }
 
+        if(attackData.skills.length > 0) {
+            embed.addFields({name: 'Skills', value: ' '})
+            attackData.skills.forEach(skill => {
+                embed.addFields({name: skill.name, value: skill.text})
+            })
+        }
+
         if(attackData.addDamage != null) {
             embed.addFields({name: 'Added Damage', value: attackData.addDamage.toString()})
         }
@@ -219,6 +245,58 @@ async function execAttack(interaction) {
         interaction.deferReply()
         interaction.deleteReply()
         interaction.channel.send({embeds: [embed]})
+}
+
+async function execGetSkill(interaction) {
+    if(interaction.options.get('name') != null) {
+        const skill = await db.getSkill(interaction.options.get('name').value)
+
+        const embed = new discord.EmbedBuilder()
+            .setTitle('Skill')
+            .setColor('DarkPurple')
+            .addFields({name: 'Skill  [Type|Value|Text]', value: skill.Name + '  [ ' + skill.type + ' | ' + skill.value.toString() + ' | ' + skill.text + ' ]'})
+
+        interaction.deferReply()
+        interaction.deleteReply()
+        interaction.channel.send({embeds: [embed]})
+        return
+    }
+
+    const skills = await db.getSkills()
+
+    const embed = new discord.EmbedBuilder()
+        .setTitle('Skills')
+        .setColor('DarkPurple')
+        .addFields({name: 'Skill  [Type|Value|Text]', value: ' '})
+
+    skills.forEach(skill => {
+        embed.addFields({name: ' ', value: skill.Name + '  [ ' + skill.type + ' | ' + skill.value.toString() + ' | ' + skill.text + ' ]'})
+    });
+
+    interaction.deferReply()
+    interaction.deleteReply()
+    interaction.channel.send({embeds: [embed]})
+}
+
+async function execCreateSkill(interaction) {
+    const t = await db.createSkill(interaction.options.get('name').value, interaction.options.get('type').value,
+        interaction.options.get('value').value, interaction.options.get('text').value)
+
+    if(t) {
+        interaction.reply('Skill created!')
+    } else {
+        interaction.reply('error')
+    }
+}
+
+async function execEditSkill(interaction) {
+    const t = await db.editSkill(interaction.options.get('name').value, interaction.options.get('value').value)
+
+    if(t) {
+        interaction.reply('Skill updated!')
+    } else {
+        interaction.reply('error')
+    }
 }
 
 module.exports = {execCommand}

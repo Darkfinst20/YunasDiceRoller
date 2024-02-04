@@ -1,7 +1,7 @@
 const db = require('./database.js')
 const rollHandler = require('./rollHandler.js')
 
-async function performeAttack(name, weapons, [skills], addDamage) {
+async function performeAttack(name, weapons, skills, addDamage) {
     const hitRoll = rollHandler.rollDice(20)
     if(hitRoll.value <= 5) {
         return {hitted: false, hitRoll: hitRoll}
@@ -9,10 +9,16 @@ async function performeAttack(name, weapons, [skills], addDamage) {
 
     const character = await db.getCharacter(name)
     let weaponData = []
+    let skillData = []
 
     for(let i = 0; i < weapons.length; i++) {
         const data = await db.getWeapon(weapons[i])
         weaponData.push(data)
+    }
+
+    for(let i = 0; i < skills.length; i++) {
+        const data = await db.getSkill(skills[i])
+        skillData.push(data)
     }
 
     //demon unchained etc
@@ -36,6 +42,19 @@ async function performeAttack(name, weapons, [skills], addDamage) {
             name: weapon.Name, text: weaponRoll.text + ' + ' + weapon.constant + ' | ' +  weaponDamage
         })
         totalDamage += weaponDamage
+    })
+
+    skillData.forEach(skill => {
+        if(skill.type == 'damage') {
+            totalDamage += skill.value
+            attackData.skills.push({
+                name: skill.Name, text: ' + ' + skill.value.toString()
+            })
+        } else {
+            attackData.skills.push({
+                name: skill.Name, text: skill.text
+            })
+        }
     })
 
     attackData.totalDamage = totalDamage
