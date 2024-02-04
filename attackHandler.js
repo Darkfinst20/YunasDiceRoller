@@ -21,9 +21,18 @@ async function performeAttack(name, weapons, skills, addDamage) {
         skillData.push(data)
     }
 
-    //demon unchained etc
+    //unique Skills
+    let damageStat = 0
+    if(skills.includes('DMG Control')) {
+        damageStat = character.intelligence
+    } else {
+        damageStat = character.strength
+        if(skills.includes('Demon Unchained')) {
+            damage = character.strength * 2
+        }
+    }
 
-    const damage = (character.strength - (character.strength % 10)) / 10 //replace with mag 
+    const damage = (damageStat - (damageStat % 10)) / 10
     
     let totalDamage = 0
     totalDamage += damage
