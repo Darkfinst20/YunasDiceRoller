@@ -28,7 +28,7 @@ async function performeAttack(name, weapons, skills, addDamage) {
     } else {
         damageStat = character.strength
         if(skills.includes('Demon Unchained')) {
-            damage = character.strength * 2
+            damageStat = character.strength * 2
         }
     }
 
@@ -59,10 +59,12 @@ async function performeAttack(name, weapons, skills, addDamage) {
             attackData.skills.push({
                 name: skill.Name, text: ' + ' + skill.value.toString()
             })
-        } else {
-            attackData.skills.push({
-                name: skill.Name, text: skill.text
-            })
+        } else if(skill.type == 'unique') {
+            if(skill.Name != 'Blutrausch') {
+                attackData.skills.push({
+                    name: skill.Name, text: skill.text
+                })
+            }
         }
     })
 
